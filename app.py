@@ -122,11 +122,13 @@ def video_pose_estimation(source) -> None:
         messagebox.showerror("Error", "Unable to open the selected video source.")
         return
 
-    frame_index = 0
+    live_source = isinstance(source, int)
+    window_name = "Live Posture" if live_source else "Recorded Posture"
+    status_text = ""
+    status_colour = (0, 255, 0)
+
     try:
         while True:
-            frame_index += 20
-            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
             success, frame = cap.read()
             if not success:
                 break
@@ -135,23 +137,53 @@ def video_pose_estimation(source) -> None:
             results = POSE_FOR_STREAM.process(rgb_frame)
             pose_landmarks = _extract_landmarks(frame, results)
 
-            display_frame = cv2.resize(frame, (600, 800))
-            cv2.imshow("Image", display_frame)
-
             rula_score, reba_score = _evaluate_scores(pose_landmarks)
             _update_gui_scores(rula_score, reba_score)
 
-            if rula_score.isdigit() and int(rula_score) > 3:
-                show_warning("Posture not proper in upper body")
+            status_text = "Posture within acceptable range"
+            status_colour = (0, 200, 0)
+            if rula_score == "NULL" or reba_score == "NULL":
+                status_text = "Pose not detected"
+                status_colour = (0, 165, 255)
+            elif rula_score.isdigit() and int(rula_score) > 3:
+                status_text = "Upper body posture requires attention"
+                status_colour = (0, 0, 255)
             elif reba_score.isdigit() and int(reba_score) > 4:
-                show_warning("Posture not proper in your body")
-            elif rula_score == "NULL" or reba_score == "NULL":
-                show_warning("Posture Incorrect")
+                status_text = "Whole body posture requires attention"
+                status_colour = (0, 0, 255)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            display_frame = cv2.resize(frame, (720, 540))
+            overlay_text = f"RULA: {rula_score} | REBA: {reba_score}"
+            cv2.putText(
+                display_frame,
+                overlay_text,
+                (20, 40),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1.0,
+                (255, 255, 255),
+                2,
+                cv2.LINE_AA,
+            )
+            cv2.putText(
+                display_frame,
+                status_text,
+                (20, 90),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.9,
+                status_colour,
+                2,
+                cv2.LINE_AA,
+            )
+
+            cv2.imshow(window_name, display_frame)
+
+            delay = 1 if live_source else 10
+            key = cv2.waitKey(delay) & 0xFF
+            if key == ord("q"):
                 break
 
-            time.sleep(0.1)
+            if not live_source:
+                time.sleep(0.01)
     finally:
         cap.release()
         cv2.destroyAllWindows()

@@ -1,6 +1,5 @@
 <div id="top"></div>
 
-<!-- PROJECT LOGO -->
 <br />
 <div align="center">
   <img alt="" src="assets/Biomechani.png" height=" x    "  />
@@ -24,7 +23,6 @@ We at Biomechanics-Ai aimed to create a model which deals with Ergonomic assessm
 <br>
 
 
-<!-- ABOUT THE PROJECT -->
 <div align="left"> 
 <img src="https://img.shields.io/badge/Objective-blue?logo=Pinboard&style=for-the-badge" /><br>
 
@@ -87,13 +85,13 @@ height="40"></img></a>&nbsp;&nbsp;
 
 <p float="left">
   <img src="https://ergo-plus.com/wp-content/uploads/rapid-upper-limb-assessment-rula-1.png?x69419" width="800" height=" 800"/>
-  <img src="https://i.ibb.co/K9DCFKH/Screenshot-2022-03-04-at-3-36-23-PM.png" width="500" height=" 500" /> 
+  <img src="https://i.ibb.co/K9DCFKH/Screenshot-2022-03-04-at-3-36-23-PM.png" width="500" height=" 500" />  
   
 </p>
 
 <p float="left">
   <img src="assets/Screenshot 2022-03-03 at 3.14.35 PM.png" height=" 500" width="500">
-  <img src="https://i.ibb.co/7GtYmQw/Screenshot-2022-03-04-at-3-38-05-PM.png" width="500" height=" 500" /> 
+  <img src="https://i.ibb.co/7GtYmQw/Screenshot-2022-03-04-at-3-38-05-PM.png" width="500" height=" 500" />  
   
 </p>
 <br>
@@ -102,112 +100,3 @@ height="40"></img></a>&nbsp;&nbsp;
 <div align="left"> 
   <img src="https://img.shields.io/badge/Setting%20up%20locally-purple?logo=visual-studio-code&style=for-the-badge" height="28"/> 
 </div><br>
-  
-   ```
-   git clone https://github.com/<your-username>/ergo_hope.git
-   ```
-
-   ```
-   cd ergo_hope
-   ```
-
-   ```
-   python3 -m venv .venv
-   source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
-   pip install --upgrade pip
-   pip install -r requirements.txt
-   ```
-
-   ```
-   python3 app.py
-   ```
-
-   These commands have been verified with Python 3.12 on macOS (Apple Silicon). Ensure you allow webcam permissions when prompted by macOS.
-<br>
-<br>
- 
-<div align="left"> 
-<img src="https://img.shields.io/badge/Future_Scopes-brown?style=for-the-badge" /><br>
-
-- Integration with smart camera and iot.
-- Creating an ecosystem of devices which can monitor and provide real time alerts about their hazardous muscoskeletal posture.
-- Improved Model accuracy.
-- Integration with open posture model by CMU.
-- Backend data to scripted physio assesment sheet.
-- Integrable web tool dev with existing web-app.
-
-
-<br>
-<br>
-
- <div align="left"> 
-  <img src="https://img.shields.io/badge/Contributors-black?logo=Github&style=for-the-badge" height="28"/> 
-</div>
-  <br>
-
-<div align="left"> 
-  <table>
-<tr align="left">
- <td>
-
-Divyanshu Yadav
-
-<p align="center">
-<img src = "https://biomechanics-ai.netlify.app/static/media/div.84734c08586723935f13.jpg"  height="120" alt="Indira">
-</p>
-<p align="center">
-<a href = "https://github.com/divyanshu1810"><img src = "http://www.iconninja.com/files/241/825/211/round-collaboration-social-github-code-circle-network-icon.svg" width="36" height = "36"/></a>
-<a href = "https://www.linkedin.com/in/divyanshu-yadav-b32a76220/">
-<img src = "http://www.iconninja.com/files/863/607/751/network-linkedin-social-connection-circular-circle-media-icon.svg" width="36" height="36"/>
-</a>
-</p>
- <strong>Web Developer<strong>
-</td>
-<td>
-
-Krish Katyal 
-
-<p align="center">
-<img src = "https://avatars.githubusercontent.com/krishkatyal"  height="120" alt="Srijarko">
-</p>
-<p align="center">
-<a href = "https://github.com/krishkatyal"><img src = "http://www.iconninja.com/files/241/825/211/round-collaboration-social-github-code-circle-network-icon.svg" width="36" height = "36"/></a>
-<a href = "https://www.linkedin.com/in/krishkatyal/">
-<img src = "http://www.iconninja.com/files/863/607/751/network-linkedin-social-connection-circular-circle-media-icon.svg" width="36" height="36"/>
-</a>
-</p>
-    <strong>ML Developer<strong>
-</td>
-
-<td>
-  
-Omprasad Sadavarte
-
-<p align="center">
-<img src = "https://i.ibb.co/FzZWR4z/IMG-6402.jpg"  height="120" alt="Omprasad Sadavarte">
-</p>
-<p align="center">
-<a href = "https://github.com/OmSadavarte"><img src = "http://www.iconninja.com/files/241/825/211/round-collaboration-social-github-code-circle-network-icon.svg" width="36" height = "36"/></a>
-<a href = "https://www.linkedin.com/in/omprasad-sadavarte-3a0bbb211/">
-<img src = "http://www.iconninja.com/files/863/607/751/network-linkedin-social-connection-circular-circle-media-icon.svg" width="36" height="36"/>
-</a>
-</p>
-  <strong>ML | Frontend<strong>
-</td>
-  
-  </table>
-</tr>
-</div>
-  <br>
-
- <div align="left">
- <p>
- <br>
-   <img src="https://img.shields.io/badge/License-MIT-yellow.svg?logo=Microsoft%20Word&style=for-the-badge" height="28"/><br>
-   <br><strong>Biomechanics-Ai_ntl.ipynb</strong> is under MIT License, Please Read the license.
-  <p>
- </div>
- <br>
-  
-  
- <!-- END -->
