@@ -104,20 +104,59 @@ height="40"></img></a>&nbsp;&nbsp;
 </div><br>
   
    ```
-   git clone https://github.com/<your-username>/Biomechanics-Ai_ntl.ipynb
-   ```   
-
-   ```
-   cd Biomechanics-Ai_ntl.ipynb
+   git clone https://github.com/<your-username>/ergo_hope.git
+   cd ergo_hope
    ```
 
-   ```
-   pip install -r requirements.txt
+### Create and activate a dedicated Python environment
+
+Using a virtual environment keeps the dependencies for this project isolated from the rest of your machine. It also guarantees that `pip` installs packages into the project folder instead of globally.
+
+1. Create the environment:
+
+   ```bash
+   python3 -m venv .venv
    ```
 
+2. Activate it (the command prompt will gain a `(.venv)` prefix when it succeeds):
+
+   ```bash
+   source .venv/bin/activate        # macOS / Linux
+   # .venv\Scripts\activate.bat    # Windows PowerShell / Command Prompt
    ```
-   python3 app.py
+
+3. Upgrade `pip` inside the environment and install the project requirements:
+
+   ```bash
+   python -m pip install --upgrade pip
+   python -m pip install -r requirements.txt
    ```
+
+4. Confirm you are using the virtual environment before running the app:
+
+   ```bash
+   which python   # should point to <repo>/.venv/bin/python on macOS/Linux
+   ```
+
+   To leave the environment at any time, run `deactivate`.
+
+#### What is the `__pycache__` folder?
+
+Python compiles modules the first time they are imported and stores the cached bytecode inside `__pycache__`. The garbled characters you see when opening the files are expected—they are binary `.pyc` files. The directory is safe to delete, but Python will simply recreate it the next time you run the program, so it is best to leave it alone.
+
+### Launch the live posture analyser
+
+With the virtual environment activated and dependencies installed:
+
+```bash
+python app.py
+```
+
+* Click **"Choose Live Posture Analysis using webcam"** to stream from your default camera. Allow webcam permissions when macOS prompts you on first launch.
+* The OpenCV preview window displays the current RULA and REBA scores in the top-left corner. A coloured status message (green, amber, or red) signals whether your posture is within range or requires attention. Press **`q`** while the preview window is focused to stop the stream.
+* To analyse a photo or prerecorded video instead, use **"Browse for a video or an image"** and pick the desired file.
+
+These commands have been verified with Python 3.12 on macOS (Apple Silicon).
 <br>
 <br>
  

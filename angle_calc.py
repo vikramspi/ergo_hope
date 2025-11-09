@@ -1,19 +1,50 @@
+from __future__ import annotations
+
 import math
+from pathlib import Path
+from typing import Dict, List, Tuple
+
 import numpy as np
-profile=""
 import pandas as pd
-tablea=pd.read_csv('./Rula_score/TableA.csv')
-tableb=pd.read_csv('./Rula_score/TableB.csv')
-tablec=pd.read_csv('./Rula_score/TableC.csv')
-tablea1=pd.read_csv('./Reba_score/TableA.csv')
-tableb1=pd.read_csv('./Reba_score/TableB.csv')
-tablec1=pd.read_csv('./Reba_score/TableC.csv')
 
-def rula_risk(point_score, wrist, trunk, upper_Shoulder, lower_Limb, neck, wrist_twist, legs, muscle_use, force_load_a, force_load_b, upper_body_muscle):
 
-    rula={}
-    rula['score']='NULL'
-    rula['risk']='NULL'
+_DATA_DIR = Path(__file__).resolve().parent
+_RULA_DIR = _DATA_DIR / "Rula_score"
+_REBA_DIR = _DATA_DIR / "Reba_score"
+
+
+tablea = pd.read_csv(_RULA_DIR / "TableA.csv")
+tableb = pd.read_csv(_RULA_DIR / "TableB.csv")
+tablec = pd.read_csv(_RULA_DIR / "TableC.csv")
+tablea1 = pd.read_csv(_REBA_DIR / "TableA.csv")
+tableb1 = pd.read_csv(_REBA_DIR / "TableB.csv")
+tablec1 = pd.read_csv(_REBA_DIR / "TableC.csv")
+
+
+PointScore = Dict[str, float | int | str]
+AngleDict = Dict[str, int | str]
+Landmark = List[float]
+PoseLandmarks = List[Landmark]
+RiskResult = Dict[str, PointScore | str]
+
+def rula_risk(
+    point_score: PointScore,
+    wrist: int,
+    trunk: int,
+    upper_Shoulder: int,
+    lower_Limb: int,
+    neck: int,
+    wrist_twist: int,
+    legs: int,
+    muscle_use: int,
+    force_load_a: int,
+    force_load_b: int,
+    upper_body_muscle: int,
+) -> Tuple[Dict[str, str], PointScore]:
+
+    rula: Dict[str, str] = {}
+    rula['score'] = 'NULL'
+    rula['risk'] = 'NULL'
     if wrist!=0 and  trunk!=0 and upper_Shoulder!=0 and lower_Limb!=0 and neck!=0 and wrist_twist!=0:
         #Table A:
         col_name=str(wrist)+'WT'+str(wrist_twist)
@@ -58,11 +89,22 @@ def rula_risk(point_score, wrist, trunk, upper_Shoulder, lower_Limb, neck, wrist
     # print(rula)
     return rula, point_score
 
-def reba_risk(point_score, wrist, trunk, upper_Shoulder, lower_Limb, neck, legs, force_load_a, coupling_score, activity_score):
+def reba_risk(
+    point_score: PointScore,
+    wrist: int,
+    trunk: int,
+    upper_Shoulder: int,
+    lower_Limb: int,
+    neck: int,
+    legs: int,
+    force_load_a: int,
+    coupling_score: int,
+    activity_score: int,
+) -> Tuple[Dict[str, str], PointScore]:
 
-    reba={}
-    reba['score']='NULL'
-    reba['risk']='NULL'
+    reba: Dict[str, str] = {}
+    reba['score'] = 'NULL'
+    reba['risk'] = 'NULL'
 
     if wrist!=0 and trunk!=0 and upper_Shoulder!=0 and lower_Limb!=0 and neck!=0 and legs!=0:
         #Tabel A:
@@ -106,14 +148,17 @@ def reba_risk(point_score, wrist, trunk, upper_Shoulder, lower_Limb, neck, legs,
     # print(reba,point_score)
     return reba, point_score
 
-def reba_score(angle_dict, pose, profile):
+def reba_score(angle_dict: AngleDict, pose: PoseLandmarks, profile: str) -> RiskResult:
+    if len(pose) < 33:
+        return {'score': 'NULL', 'risk': 'NULL', 'point_score': {}}
+
     R_Ear = pose[8]
     L_Ear = pose[7]
     R_Shoulder = pose[12]
     R_Elbow = pose[14]
     L_Shoulder = pose[11]
     L_Elbow = pose[13]
-    point_score={}
+    point_score: PointScore = {}
 
     if profile:
     
@@ -292,25 +337,22 @@ def reba_score(angle_dict, pose, profile):
         activity_score=0
         point_score['activity_score']=activity_score
         try:
-            reba, point_score=reba_risk(point_score, wrist, trunk, upper_Shoulder, lower_Limb, neck, legs, force_load_a, coupling_score, activity_score)
-            reba['point_score']=point_score
-            
+            reba, point_score = reba_risk(point_score, wrist, trunk, upper_Shoulder, lower_Limb, neck, legs, force_load_a, coupling_score, activity_score)
+            reba['point_score'] = point_score
+
         except Exception as e:
-            reba={}
-            reba['score']='NULL'
-            reba['risk']='NULL'
-            reba['point_score']={}
+            reba = {'score': 'NULL', 'risk': 'NULL', 'point_score': {}}
 
     else:
-        reba={}
-        reba['score']='NULL'
-        reba['risk']='NULL'
-        reba['point_score']={}
+        reba = {'score': 'NULL', 'risk': 'NULL', 'point_score': {}}
 
     return reba
 
-def rula_score(angle_dict, pose,profile):
-    
+def rula_score(angle_dict: AngleDict, pose: PoseLandmarks, profile: str) -> RiskResult:
+
+    if len(pose) < 33:
+        return {'score': 'NULL', 'risk': 'NULL', 'point_score': {}}
+
     Nose = pose[0]
     L_Neck = pose[11]
     R_Neck = pose[12]
@@ -334,7 +376,7 @@ def rula_score(angle_dict, pose,profile):
     R_Foot = pose[32]
     R_Palm = pose[20]
     L_Palm = pose[19]
-    point_score={}
+    point_score: PointScore = {}
     if profile:
 
         if profile=='Right' or profile=='Left' or profile=='Front':
@@ -468,24 +510,20 @@ def rula_score(angle_dict, pose,profile):
         point_score['force_load_b']=force_load_b
         point_score['muscle_use_b']=upper_body_muscle
         try:
-            rula, point_score=rula_risk(point_score, wrist, trunk, upper_Shoulder, lower_Limb, neck, wrist_twist, legs, muscle_use, force_load_a, force_load_b, upper_body_muscle)
-            rula['point_score']=point_score
-        
+            rula, point_score = rula_risk(point_score, wrist, trunk, upper_Shoulder, lower_Limb, neck, wrist_twist, legs, muscle_use, force_load_a, force_load_b, upper_body_muscle)
+            rula['point_score'] = point_score
+
         except Exception as e:
-            rula={}
-            rula['score']='NULL'
-            rula['risk']='NULL'
-            rula['point_score']={}
+            rula = {'score': 'NULL', 'risk': 'NULL', 'point_score': {}}
 
     else:
-        rula={}
-        rula['score']='NULL'
-        rula['risk']='NULL'
-        rula['point_score']={}
+        rula = {'score': 'NULL', 'risk': 'NULL', 'point_score': {}}
 
     return rula
 
-def angle_calc(pose):
+def angle_calc(pose: PoseLandmarks) -> Tuple[str, str]:
+    if len(pose) < 33:
+        return 'NULL', 'NULL'
     Nose = pose[0]
     L_Neck = pose[11]
     R_Neck = pose[12]
