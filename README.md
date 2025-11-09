@@ -104,20 +104,25 @@ height="40"></img></a>&nbsp;&nbsp;
 </div><br>
   
    ```
-   git clone https://github.com/<your-username>/Biomechanics-Ai_ntl.ipynb
-   ```   
-
-   ```
-   cd Biomechanics-Ai_ntl.ipynb
+   git clone https://github.com/<your-username>/ergo_hope.git
    ```
 
    ```
+   cd ergo_hope
+   ```
+
+   ```
+   python3 -m venv .venv
+   source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
+   pip install --upgrade pip
    pip install -r requirements.txt
    ```
 
    ```
    python3 app.py
    ```
+
+   These commands have been verified with Python 3.12 on macOS (Apple Silicon). Ensure you allow webcam permissions when prompted by macOS.
 <br>
 <br>
  
