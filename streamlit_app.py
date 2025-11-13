@@ -5,10 +5,13 @@ import time
 from contextlib import suppress
 from dataclasses import dataclass
 from typing import List, Tuple
+import threading
 
 import cv2
 import mediapipe as mp
 import streamlit as st
+import av
+from streamlit_webrtc import VideoProcessorBase, WebRtcMode, webrtc_streamer
 
 from angle_calc import angle_calc
 
@@ -64,82 +67,76 @@ def _status_from_scores(rula_score: str, reba_score: str) -> PoseStatus:
     return PoseStatus(rula_score, reba_score, "Review posture", default_colour)
 
 
-def _get_pose() -> mp_pose.Pose:
-    pose = st.session_state.get("_pose_solution")
-    if pose is None:
-        pose = mp_pose.Pose(
+class PoseVideoProcessor(VideoProcessorBase):
+    def __init__(self) -> None:
+        self._pose = mp_pose.Pose(
             static_image_mode=False,
             model_complexity=1,
             enable_segmentation=False,
             min_detection_confidence=0.5,
             min_tracking_confidence=0.5,
         )
-        st.session_state["_pose_solution"] = pose
-    return pose
+        self._lock = threading.Lock()
+        self._latest_status: PoseStatus = PoseStatus("--", "--", "Waiting for webcam", (120, 120, 120))
 
+    def _extract_landmarks(self, image, results) -> List[List[float]]:
+        pose_points: List[List[float]] = []
+        if not results or not results.pose_landmarks:
+            return pose_points
 
-def _release_pose() -> None:
-    pose = st.session_state.pop("_pose_solution", None)
-    if pose is not None:
-        close = getattr(pose, "close", None)
-        if callable(close):
-            with suppress(Exception):
-                close()
-
-
-def _extract_landmarks(image, results) -> List[List[float]]:
-    pose_points: List[List[float]] = []
-    if not results or not results.pose_landmarks:
+        height, width, _ = image.shape
+        mp_draw.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+        for idx, landmark in enumerate(results.pose_landmarks.landmark):
+            pose_points.append([landmark.x, landmark.y, landmark.z, landmark.visibility])
+            cx, cy = int(landmark.x * width), int(landmark.y * height)
+            colour = (255, 0, 0) if idx % 2 == 0 else (255, 0, 255)
+            cv2.circle(image, (cx, cy), 4, colour, cv2.FILLED)
         return pose_points
 
-    height, width, _ = image.shape
-    mp_draw.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
-    for idx, landmark in enumerate(results.pose_landmarks.landmark):
-        pose_points.append([landmark.x, landmark.y, landmark.z, landmark.visibility])
-        cx, cy = int(landmark.x * width), int(landmark.y * height)
-        colour = (255, 0, 0) if idx % 2 == 0 else (255, 0, 255)
-        cv2.circle(image, (cx, cy), 4, colour, cv2.FILLED)
-    return pose_points
+    def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
+        image = frame.to_ndarray(format="bgr24")
+        rgb_frame = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        results = self._pose.process(rgb_frame)
+        pose_landmarks = self._extract_landmarks(image, results)
 
+        rula_score, reba_score = _evaluate_scores(pose_landmarks)
+        status = _status_from_scores(rula_score, reba_score)
 
-def _annotate_frame(frame) -> Tuple[PoseStatus, any]:
-    pose = _get_pose()
-    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    results = pose.process(rgb_frame)
-    pose_landmarks = _extract_landmarks(frame, results)
+        overlay_text = f"RULA: {status.rula} | REBA: {status.reba}"
+        cv2.putText(
+            image,
+            overlay_text,
+            (20, 40),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.0,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
+        cv2.putText(
+            image,
+            status.message,
+            (20, 90),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.9,
+            status.bgr_colour,
+            2,
+            cv2.LINE_AA,
+        )
 
-    rula_score, reba_score = _evaluate_scores(pose_landmarks)
-    status = _status_from_scores(rula_score, reba_score)
+        with self._lock:
+            self._latest_status = status
 
-    overlay_text = f"RULA: {status.rula} | REBA: {status.reba}"
-    cv2.putText(
-        frame,
-        overlay_text,
-        (20, 40),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        1.0,
-        (255, 255, 255),
-        2,
-        cv2.LINE_AA,
-    )
-    cv2.putText(
-        frame,
-        status.message,
-        (20, 90),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        0.9,
-        status.bgr_colour,
-        2,
-        cv2.LINE_AA,
-    )
-    return status, frame
+        return av.VideoFrame.from_ndarray(image, format="bgr24")
 
+    def get_latest_status(self) -> PoseStatus:
+        with self._lock:
+            return self._latest_status
 
-def _release_capture() -> None:
-    capture = st.session_state.pop("_capture", None)
-    if capture is not None and capture.isOpened():
-        with suppress(Exception):
-            capture.release()
+    def __del__(self) -> None:  # pragma: no cover - defensive cleanup
+        close = getattr(self._pose, "close", None)
+        if callable(close):
+            close()
 
 
 def _render_metrics(column, status: PoseStatus) -> None:
@@ -158,46 +155,25 @@ def main() -> None:
     st.title("Ergonomics Pose Analysis Dashboard")
     st.write("Use the toggle below to start or stop the live webcam posture analysis.")
 
-    running = st.session_state.get("_running", False)
-    run_stream = st.checkbox("Start live webcam analysis", value=running)
-    st.session_state["_running"] = run_stream
-
+    run_stream = st.checkbox("Start live webcam analysis", value=False)
     video_column, score_column = st.columns([3, 2])
-    placeholder = video_column.empty()
-    status: PoseStatus = st.session_state.get(
-        "_latest_status", PoseStatus("--", "--", "Webcam idle", (153, 153, 153))
-    )
 
+    status = PoseStatus("--", "--", "Webcam idle", (153, 153, 153))
+    ctx = None
     if run_stream:
-        capture = st.session_state.get("_capture")
-        if capture is None or not capture.isOpened():
-            capture = cv2.VideoCapture(0)
-            capture.set(cv2.CAP_PROP_FRAME_WIDTH, 960)
-            capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-            st.session_state["_capture"] = capture
-
-        if not capture.isOpened():
-            placeholder.error(
-                "Unable to access the webcam. Check camera permissions or availability."
-            )
+        ctx = webrtc_streamer(
+            key="pose-analysis",
+            mode=WebRtcMode.SENDRECV,
+            media_stream_constraints={"video": True, "audio": False},
+            video_processor_factory=PoseVideoProcessor,
+            async_processing=True,
+        )
+        if ctx and ctx.video_processor:
+            status = ctx.video_processor.get_latest_status()
         else:
-            success, frame = capture.read()
-            if not success:
-                placeholder.error("Webcam stream temporarily unavailable. Retrying...")
-            else:
-                status, annotated = _annotate_frame(frame)
-                st.session_state["_latest_status"] = status
-                placeholder.image(
-                    cv2.cvtColor(annotated, cv2.COLOR_BGR2RGB), channels="RGB"
-                )
-                _render_metrics(score_column, status)
-                time.sleep(0.03)
-                st.experimental_rerun()
-                return
+            video_column.info("Connecting to webcam...")
     else:
-        placeholder.info("Enable the checkbox to start streaming from your webcam.")
-        _release_capture()
-        _release_pose()
+        video_column.info("Enable the checkbox to start streaming from your webcam.")
 
     _render_metrics(score_column, status)
 
