@@ -1,8 +1,8 @@
-OpenCV 4.5.4
-mediapipe 0.8.9.1
-numpy 1.22.2
-pandas 1.4.1
-tk-tools 0.14.0
-PyAutoGUI 0.9.53
-mime 0.1.0
-secure-smtplib 0.1.1
+opencv-python>=4.9.0.80
+mediapipe>=0.10.14
+numpy>=1.26.4
+pandas>=2.2.2
+pyautogui>=0.9.54
+streamlit>=1.33.0
+streamlit-webrtc>=0.47.4
+av>=10.0.0
