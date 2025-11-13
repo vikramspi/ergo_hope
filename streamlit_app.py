@@ -1,14 +1,16 @@
 """Streamlit dashboard for live ergonomics pose analysis."""
 from __future__ import annotations
 
-import threading
+import time
+from contextlib import suppress
 from dataclasses import dataclass
 from typing import List, Tuple
+import threading
 
-import av
 import cv2
 import mediapipe as mp
 import streamlit as st
+import av
 from streamlit_webrtc import VideoProcessorBase, WebRtcMode, webrtc_streamer
 
 from angle_calc import angle_calc
