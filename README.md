@@ -131,6 +131,23 @@ Using a virtual environment keeps the dependencies for this project isolated fro
    python -m pip install -r requirements.txt
    ```
 
+codex/update-codebase-for-python-3.12-compatibility-upkjjo
+   > **Having trouble with `codex/update-codebase-for-python-3.12-compatibility-d9fps9`?**
+   >
+   > An older experiment briefly added a placeholder line with that exact text to
+   > `requirements.txt`. If you see the error `Invalid requirement:
+   > 'codex/update-codebase-for-python-3.12-compatibility-d9fps9'`, it means the
+   > local file still carries that stale entry. Reset it with:
+   >
+   > ```bash
+   > git checkout -- requirements.txt
+   > ```
+   >
+   > Then rerun `python -m pip install -r requirements.txt` inside your virtual
+   > environment.
+
+=======
+main
 4. Confirm you are using the virtual environment before running the app:
 
    ```bash
