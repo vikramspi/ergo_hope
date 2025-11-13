@@ -1,6 +1,5 @@
 <div id="top"></div>
 
-<!-- PROJECT LOGO -->
 <br />
 <div align="center">
   <img alt="" src="assets/Biomechani.png" height=" x    "  />
@@ -24,7 +23,6 @@ We at Biomechanics-Ai aimed to create a model which deals with Ergonomic assessm
 <br>
 
 
-<!-- ABOUT THE PROJECT -->
 <div align="left"> 
 <img src="https://img.shields.io/badge/Objective-blue?logo=Pinboard&style=for-the-badge" /><br>
 
@@ -87,13 +85,13 @@ height="40"></img></a>&nbsp;&nbsp;
 
 <p float="left">
   <img src="https://ergo-plus.com/wp-content/uploads/rapid-upper-limb-assessment-rula-1.png?x69419" width="800" height=" 800"/>
-  <img src="https://i.ibb.co/K9DCFKH/Screenshot-2022-03-04-at-3-36-23-PM.png" width="500" height=" 500" /> 
+  <img src="https://i.ibb.co/K9DCFKH/Screenshot-2022-03-04-at-3-36-23-PM.png" width="500" height=" 500" />  
   
 </p>
 
 <p float="left">
   <img src="assets/Screenshot 2022-03-03 at 3.14.35 PM.png" height=" 500" width="500">
-  <img src="https://i.ibb.co/7GtYmQw/Screenshot-2022-03-04-at-3-38-05-PM.png" width="500" height=" 500" /> 
+  <img src="https://i.ibb.co/7GtYmQw/Screenshot-2022-03-04-at-3-38-05-PM.png" width="500" height=" 500" />  
   
 </p>
 <br>
@@ -101,6 +99,7 @@ height="40"></img></a>&nbsp;&nbsp;
 
 <div align="left"> 
   <img src="https://img.shields.io/badge/Setting%20up%20locally-purple?logo=visual-studio-code&style=for-the-badge" height="28"/> 
+codex/update-codebase-for-python-3.12-compatibility-d9fps9
 </div><br>
   
    ```
@@ -132,6 +131,7 @@ Using a virtual environment keeps the dependencies for this project isolated fro
    python -m pip install -r requirements.txt
    ```
 
+codex/update-codebase-for-python-3.12-compatibility-upkjjo
    > **Having trouble with `codex/update-codebase-for-python-3.12-compatibility-d9fps9`?**
    >
    > An older experiment briefly added a placeholder line with that exact text to
@@ -146,6 +146,8 @@ Using a virtual environment keeps the dependencies for this project isolated fro
    > Then rerun `python -m pip install -r requirements.txt` inside your virtual
    > environment.
 
+=======
+main
 4. Confirm you are using the virtual environment before running the app:
 
    ```bash
@@ -272,3 +274,6 @@ Omprasad Sadavarte
   
   
  <!-- END -->
+=======
+</div><br>
+main

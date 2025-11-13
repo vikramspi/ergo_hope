@@ -3,6 +3,13 @@ mediapipe>=0.10.14
 numpy>=1.26.4
 pandas>=2.2.2
 pyautogui>=0.9.54
+codex/update-codebase-for-python-3.12-compatibility-upkjjo
 streamlit>=1.33.0
 streamlit-webrtc>=0.47.4
 av>=10.0.0
+codex/update-codebase-for-python-3.12-compatibility-d9fps9
+streamlit>=1.33.0
+streamlit-webrtc>=0.47.4
+av>=10.0.0
+main
+main
