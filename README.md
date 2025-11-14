@@ -131,9 +131,7 @@ Using a virtual environment keeps the dependencies for this project isolated fro
    python -m pip install -r requirements.txt
    ```
 
-=======
 codex/update-codebase-for-python-3.12-compatibility-upkjjo
- 
    > **Having trouble with `codex/update-codebase-for-python-3.12-compatibility-d9fps9`?**
    >
    > An older experiment briefly added a placeholder line with that exact text to
@@ -148,7 +146,8 @@ codex/update-codebase-for-python-3.12-compatibility-upkjjo
    > Then rerun `python -m pip install -r requirements.txt` inside your virtual
    > environment.
 
- 
+=======
+main
 4. Confirm you are using the virtual environment before running the app:
 
    ```bash
